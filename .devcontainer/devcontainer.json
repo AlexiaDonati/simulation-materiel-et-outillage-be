@@ -1,0 +1,15 @@
+{
+	"name": "dev-mo-sim",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:5-24-trixie",
+
+	"runArgs": [
+		"--name=dev-mo-sim",
+		"--rm"
+	],
+
+	"postCreateCommand": "yarn install",
+
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+	"shutdownAction": "stopContainer"
+}
