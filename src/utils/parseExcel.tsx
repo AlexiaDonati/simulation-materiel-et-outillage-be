@@ -7,7 +7,7 @@ export interface MaterialRow {
   add: {
     year: number;
     value: number;
-    code: 3 | 4; // 3 = new condition, 4 = acquisition
+    code: 3 | 4; // 3 = new, 4 = acquisition
   };
 
   remove: {
@@ -90,7 +90,7 @@ export async function parseMaterialExcel(file: File): Promise<MaterialRow[]> {
     const acquisitionYear = toNumber(row[9]); // 4a
     const acquisitionValue = toNumber(row[10]); //4b
     
-    const fraisYear = toNumber(row[11]); // 5a currently ignored
+    const fraisYear = toNumber(row[11]); // 5a -> currently ignored
     // TODO: What to do if fraisYear != add.year?
 
     const fraisValue = toNumber(row[12]); // 5b

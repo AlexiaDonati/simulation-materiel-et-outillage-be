@@ -1,9 +1,10 @@
 import { useState } from 'react';
 
 import { parseMaterialExcel, type MaterialRow, } from './utils/parseExcel';
+import RC from './RC.js';
+
 
 import './App.css'
-
 
 function App() {
   const [fileName, setFileName] = useState('')
@@ -48,7 +49,7 @@ function App() {
     <>
       <section id="center">
         <div>
-          <h1>Simulation du calcul du revenu cadastral du matériel et outillages en Wallonie</h1>
+          <h1>Simulation du calcul du revenu cadastral du matériel et outillage en Wallonie</h1>
           <a href="https://finances.belgium.be/fr/entreprises/donnees-patrimoniales/materiel-outillage" target="_blank" rel="noopener noreferrer">
             Lien vers la documentation officielle
           </a>
@@ -88,6 +89,8 @@ function App() {
             <p> Remarks: {material.remarks ?? 'None'} </p>
           </div>
         ))}
+
+        <RC materials={materials} />
 
       </div>
     </>
