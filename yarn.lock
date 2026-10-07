@@ -212,6 +212,11 @@
     "@eslint/core" "^1.2.1"
     levn "^0.4.1"
 
+"@handsontable/react-wrapper@^18.1.2":
+  version "18.1.2"
+  resolved "https://registry.yarnpkg.com/@handsontable/react-wrapper/-/react-wrapper-18.1.2.tgz#2d6996a51c3b0c51d9c3fdc5213566dc36a30a80"
+  integrity sha512-mlb5DpsXGSeFWCEnugD+q80b0qHPr5HGhRY9BCJB0sdYPLqiZmD2IJkpprMuCUb/NpJCcomUsA/z/AMhrpaE5A==
+
 "@humanfs/core@^0.19.2":
   version "0.19.2"
   resolved "https://registry.yarnpkg.com/@humanfs/core/-/core-0.19.2.tgz#a8272ca03b2acf492670222b2320b6c421bfde60"
@@ -830,6 +835,11 @@ globals@^17.12.0:
   version "17.13.0"
   resolved "https://registry.yarnpkg.com/globals/-/globals-17.13.0.tgz#ab2134b5ededbf2fbe2831dd0acc36f4f1ddeac5"
   integrity sha512-RwMTC61u7hrG3ZJMkZQOK4JLJrKS8QtoTii63EmWvFXHqycY9FObBJQCbsLxSO8kjKhWE5kV1GC+Vb1g3RI0Zg==
+
+handsontable@^18.1.2:
+  version "18.1.2"
+  resolved "https://registry.yarnpkg.com/handsontable/-/handsontable-18.1.2.tgz#ebbed7f421729fbb8247462293010c293899dfa7"
+  integrity sha512-iL4Cia0Fsl+md1oCqUS8PJqfft3583d5ptc5M7ewfp6JTUsNsrIcpF3GPYvZy57e7P5PACX8WboGlkwgHn0h9Q==
 
 hashery@^1.4.0, hashery@^1.5.1:
   version "1.5.1"

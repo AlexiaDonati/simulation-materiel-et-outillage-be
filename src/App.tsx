@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
 import { parseMaterialExcel, type MaterialRow, } from './utils/parseExcel';
-import RC from './RC.js';
 
+import MaterialsTable from './MaterialsTable';
+import RC from './RC.js';
 
 import './App.css'
 
@@ -39,12 +40,6 @@ function App() {
     } 
   };
 
-  const numberFormatter = new Intl.NumberFormat('de-DE', {
-    useGrouping: false,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-
   return (
     <>
       <section id="center">
@@ -54,45 +49,30 @@ function App() {
             Lien vers la documentation officielle
           </a>
         </div>
-      </section>
 
-      <div>
-        <label htmlFor="excel-upload">Uploader le fichier Excel à calculer</label>
+        <div>
+          <label htmlFor="excel-upload">Uploader le fichier Excel à calculer</label>
 
-        <input 
-          type="file" 
-          accept=".xlsx,.xls" 
-          onChange={handleFileUpload} 
-        />
+          <input 
+            type="file" 
+            accept=".xlsx,.xls" 
+            onChange={handleFileUpload} 
+          />
 
-        {fileName && ( <p> Fichier sélectionné: <strong>{fileName}</strong> </p> )} 
-          
+          {fileName && ( <p> Fichier sélectionné: <strong>{fileName}</strong> </p> )} 
+           
+        </div>
+
         {error && ( <p role="alert"> {error} </p> )} 
-        
+          
         <p> Materials found: {materials.length} </p> 
-        
-        {materials.map((material, index) => ( 
-          <div key={index}> 
-            <h3> {material.orderNumber ?? index + 1}.{' '} {material.description ?? 'matériel sans désignation'} </h3> 
+          
+        <MaterialsTable materials={materials} />
 
-            <p> Affectation en: {material.add.year} </p> 
-            <p> Investissement: {numberFormatter.format(material.add.value)} </p> 
-            <p> Code: {material.add.code} 
-            
-            </p> {material.remove !== null && ( 
-              <>
-                <p> Désaffectation en: {material.remove.year} </p> 
-                <p> Désinvestissement: {numberFormatter.format(material.remove.value)} </p>
-              </> 
-            )}
-
-            <p> Remarks: {material.remarks ?? 'None'} </p>
-          </div>
-        ))}
+        <hr />
 
         <RC materials={materials} />
-
-      </div>
+      </section>
     </>
   )
 }
