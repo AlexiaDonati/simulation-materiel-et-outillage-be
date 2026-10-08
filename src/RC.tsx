@@ -27,7 +27,7 @@ export default function RC({ materials }: { materials: MaterialRow[] }) {
                                 {Array.from(resultRC.addYear6F.entries())
                                     .sort(([yearA], [yearB]) => yearA - yearB)
                                     .map(([year, value]) => (
-                                    <li key={year}>Année {year}: 6F = {value.toFixed(2)}</li>
+                                    <li key={year}>{year}: 6F = {value.toFixed(2)}</li>
                                 ))}
                             </ul>
                             <p>Total 6F: {resultRC.total6F.toFixed(2)}</p>
@@ -39,7 +39,7 @@ export default function RC({ materials }: { materials: MaterialRow[] }) {
                                 {Array.from(resultRC.addYear6X4.entries())
                                     .sort(([yearA], [yearB]) => yearA - yearB)
                                     .map(([year, value]) => (
-                                        <li key={year}>Année {year}: 6X4 = {value.toFixed(2)}</li>
+                                        <li key={year}>{year}: 6X4 = {value.toFixed(2)}</li>
                                 ))}
                             </ul>
                             <p>Total 6X4: {resultRC.total6X4.toFixed(2)}</p>
@@ -47,8 +47,8 @@ export default function RC({ materials }: { materials: MaterialRow[] }) {
                             <h3>6X10 pour les années 2015 et 2016</h3>
 
                             <ul>
-                                <li key="2015">Année 2015: 6X10 = {resultRC.addYear6X10_2015.toFixed(2)}</li>
-                                <li key="2016">Année 2016: 6X10 = {resultRC.addYear6X10_2016.toFixed(2)}</li>
+                                <li key="2015">2015: 6X10 = {resultRC.addYear6X10_2015.toFixed(2)}</li>
+                                <li key="2016">2016: 6X10 = {resultRC.addYear6X10_2016.toFixed(2)}</li>
                             </ul>
 
                             <p>Occasion: {resultRC.occasion.toFixed(2)}</p>

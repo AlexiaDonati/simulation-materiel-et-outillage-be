@@ -60,18 +60,17 @@ function App() {
           />
 
           {fileName && ( <p> Fichier sélectionné: <strong>{fileName}</strong> </p> )} 
-           
         </div>
 
         {error && ( <p role="alert"> {error} </p> )} 
           
-        <p> Materials found: {materials.length} </p> 
+        <p> Nombre de lignes présentes dans le formulaire 43D: {materials.length} </p> 
           
-        <MaterialsTable materials={materials} />
+        <RC materials={materials} />
 
         <hr />
-
-        <RC materials={materials} />
+        
+        <MaterialsTable materials={materials} onChange={setMaterials}/>
       </section>
     </>
   )

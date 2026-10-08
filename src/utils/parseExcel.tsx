@@ -199,5 +199,5 @@ export async function parseMaterialExcel(file: File): Promise<MaterialRow[]> {
     });
   }
 
-  return materials; // TODO: Implement parsing logic to convert rows to MaterialRow[]
+  return materials;
 }

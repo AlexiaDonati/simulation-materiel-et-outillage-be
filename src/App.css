@@ -21,3 +21,7 @@
 
   min-width: 0;
 }
+
+.section-border {
+  border-right: 3px solid #333 !important;
+}
