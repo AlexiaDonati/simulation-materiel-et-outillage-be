@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { type MaterialRow } from './utils/parseExcel';
 import { type ResultRC, computeRC } from './utils/computeRC';
 
+const coeffRC = 0.0159;
+
 export default function RC({ materials }: { materials: MaterialRow[] }) {
     const [resultRC, setResultRC] = useState<ResultRC | null>(null);
 
@@ -51,7 +53,16 @@ export default function RC({ materials }: { materials: MaterialRow[] }) {
                                 <li key="2016">2016: 6X10 = {resultRC.addYear6X10_2016.toFixed(2)}</li>
                             </ul>
 
-                            <p>Occasion: {resultRC.occasion.toFixed(2)}</p>
+                            <p>Occasion après 2004: {resultRC.occasion.toFixed(2)}</p>
+
+                            <p>Seuil: {resultRC.seuil.toFixed(2)}</p>
+
+                            <h3>Correction du seuil et occasion</h3>
+
+                            <p>6F: {(resultRC.correction6F * coeffRC).toFixed(2)}</p>
+                            <p>6X3: {(resultRC.correction6X3 * coeffRC).toFixed(2)}</p>
+                            <p>6X4: {(resultRC.total6X4 * coeffRC).toFixed(2)}</p>
+                            <p>6X10: {((resultRC.addYear6X10_2015 + resultRC.addYear6X10_2016) * coeffRC).toFixed(2)}</p>
                         </div>
                     )}
                 </div>

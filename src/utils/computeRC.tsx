@@ -14,8 +14,13 @@ export interface ResultRC {
 
     occasion: number; // occasion after 2004
 
-    // TODO: Seuil
+    seuil: number;
+
+    correction6F: number;
+    correction6X3: number;
 }
+
+const imposition = 1;
 
 const coefficients = new Map<number, number>([
     [1919, 11.49],
@@ -148,14 +153,62 @@ export async function computeRC(materials: MaterialRow[]): Promise<ResultRC> {
         }
     }
 
+    let seuil = 0;
+
+    for (const [year, materials] of addYearMap.entries()) {
+        if(year > 2004){
+            continue;
+        }
+
+        const coeff = getCoefficient(year);
+
+        for (const material of materials){
+            let calcul = material.add.value;
+
+            if(material.remove && material.remove.year <= 2004){
+                calcul -= material.remove.value
+            }
+
+            calcul *= imposition; // TODO: use the actual imposition percentage
+
+            calcul *= coeff
+
+            seuil += calcul;
+        }
+    }
+
+    let correction6F = total6F;
+
+    const removeAfter2004 = seuil - total6F;
+
+    if(removeAfter2004 >= sum6X3){
+        correction6F += sum6X3;
+    }
+    else{
+        correction6F += removeAfter2004;
+    }
+
+    const correction6X3 = (sum6X3 - (correction6F - total6F));
+
+    correction6F += occasion;
+
     return {
         addYear6F,
         total6F,
+
         sum6X3,
+
         addYear6X4,
         total6X4,
+
         addYear6X10_2015,
         addYear6X10_2016,
-        occasion
+
+        occasion,
+
+        seuil,
+
+        correction6F,
+        correction6X3,
     };
 }

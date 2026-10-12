@@ -58,13 +58,14 @@ export default function MaterialsTable({ materials, onChange } : Props) {
         tableRowsRef.current = tableRows;
     }, [tableRows]);
 
-    const lastEmittedMaterialsRef = useRef<string>(JSON.stringify(materials));
-
     // --- synchronize external changes ---
+
+    const lastEmittedMaterialsRef = useRef<string>(JSON.stringify(materials));
 
     useEffect(() => { 
         const incomingSignature = JSON.stringify(materials); 
         
+        // do not update the table if the data received is the same as the last data sent/received
         if (incomingSignature === lastEmittedMaterialsRef.current) { 
             return; 
         } 
@@ -81,15 +82,12 @@ export default function MaterialsTable({ materials, onChange } : Props) {
         lastEmittedMaterialsRef.current = incomingSignature; 
     }, [materials]);
 
-    // --- send materials to the parent component ---
-
     const emitMaterials = (rows: TableRows) => {
         const actualMaterials = rows.filter(
             (row): row is MaterialRow => row !== null
         );
 
-        lastEmittedMaterialsRef.current =
-            JSON.stringify(actualMaterials);
+        lastEmittedMaterialsRef.current = JSON.stringify(actualMaterials);
 
         onChange(actualMaterials);
     };
@@ -262,6 +260,12 @@ export default function MaterialsTable({ materials, onChange } : Props) {
                                 error = true;
                                 break; 
                             } 
+
+                            if(material.remove && Number(newValue) > material.remove.year){
+                                console.error(`Row ${row}: Remove year must be greater or equal than add year`); 
+                                error = true;
+                                break; 
+                            }
                             
                             material.add.year = Number(newValue); 
                             break;
@@ -271,6 +275,12 @@ export default function MaterialsTable({ materials, onChange } : Props) {
                                 material.add.value = 0; 
                                 break; 
                             } 
+
+                            if(material.remove && Number(newValue) < material.remove.value){
+                                console.error(`Row ${row}: Remove value must be smaller or equal than add year`); 
+                                error = true;
+                                break; 
+                            }
 
                             material.add.value = Number.isFinite(Number(newValue)) ? Number(newValue) : 0;
 
@@ -321,7 +331,7 @@ export default function MaterialsTable({ materials, onChange } : Props) {
                             } 
 
                             if(Number(newValue) > material.add.value){
-                                console.error(`Row ${row}: Remove value must be smaller or equal than add year`); 
+                                console.error(`Row ${row}: Remove value must be smaller or equal than add value`); 
                                 error = true;
                                 break; 
                             }
