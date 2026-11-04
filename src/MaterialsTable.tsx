@@ -9,6 +9,7 @@ import 'handsontable/styles/ht-theme-main.css';
 registerAllModules();
 
 import type { MaterialRow } from './utils/parseExcel';
+import { getExonerationFromRemarks } from './utils/parseExcel';
 
 type TableRows = (MaterialRow | null)[];
 
@@ -222,6 +223,7 @@ export default function MaterialsTable({ materials, onChange } : Props) {
                             remove: null, 
 
                             remarks: '', 
+                            exoneration: null,
                         }
                     }
 
@@ -347,6 +349,19 @@ export default function MaterialsTable({ materials, onChange } : Props) {
                         case 7: // remarks
                             if(newValue !== null && newValue !== undefined && String(newValue).trim() !== ''){
                                 material.remarks = String(newValue);
+
+                                // Check if the remarks contain an exoneration code and percentage
+                                let exoneration: { code: string; value: number } | null = null;
+                                
+                                try {
+                                    exoneration = getExonerationFromRemarks(material.remarks);
+                                } catch (error) {
+                                    console.error(`Row ${row}: ${error instanceof Error ? error.message : 'Invalid exoneration format.'}`);
+                                    error = true;
+                                    break;
+                                }
+
+                                material.exoneration = exoneration;
                             }
                             else {
                                 material.remarks = null

@@ -1,5 +1,35 @@
 import * as XLSX from 'xlsx';
 
+// list of possible exoneration codes
+const EXONERATION_CODES = [
+    'ADM',
+    'BAT',
+    'BUR',
+    'DEP',
+    'ETP',
+    'HSI',
+    'HUS',
+    'IMM',
+    'LES',
+    'LOC',
+    'MAC',
+    'MMM',
+    'MOB',
+    'MPE',
+    'NEX',
+    'NIM',
+    'NUS',
+    'PES',
+    'POM',
+    'REP',
+    'RES',
+    'RPL',
+    'RPT',
+    'SHE',
+    'TRP',
+    'VAN'
+];
+
 export interface MaterialRow {
   orderNumber: string | null; // not used in the calculation
   description: string | null; // not used in the calculation
@@ -17,7 +47,10 @@ export interface MaterialRow {
 
   remarks: string | null; // not used in the calculation 
 
-  // TODO: code d'exonération
+  exoneration: {
+    code: string;
+    value: number;
+  } | null;
 }
 
 function toNumber(value: unknown): number | null {
@@ -49,6 +82,36 @@ function toNumber(value: unknown): number | null {
 
 function toString(value: unknown): string {
   return value == null ? '' : String(value).trim();
+}
+
+export function getExonerationFromRemarks(remarks: string): { code: string; value: number } | null {
+    let exoneration: { code: string; value: number } | null = null;
+
+    for (const code of EXONERATION_CODES) {
+        if (remarks.includes(code)) { // case-sensitive match with the code in the remarks
+
+            // if a code is found, extract the percentage too
+            const match = remarks.match(/(\d{1,3})/); // match a number with 1 to 3 digits
+            if (match) {
+                const value = parseInt(match[1], 10);
+                if (value < 0 || value > 100) {
+                    throw new Error(
+                        `Exoneration value must be between 0 and 100.`
+                    );
+                }
+
+                exoneration = { code, value };
+            } else {
+                throw new Error(
+                    `Exoneration code found but no valid percentage value provided.`
+                );
+            }
+
+            break;
+        }
+    }
+
+    return exoneration;
 }
 
 export async function parseMaterialExcel(file: File): Promise<MaterialRow[]> {
@@ -147,6 +210,7 @@ export async function parseMaterialExcel(file: File): Promise<MaterialRow[]> {
     }
 
     // frais
+
     const hasFrais = fraisYear !== null || fraisValue !== null;
 
     if (hasFrais && (fraisValue === null)) { // If fraisYear is provided but fraisValue is not, we throw an error.
@@ -189,6 +253,17 @@ export async function parseMaterialExcel(file: File): Promise<MaterialRow[]> {
     const remove = hasRemove 
         ? { year: removeYear!, value: removeValue! } 
         : null;
+
+    // exoneration
+    
+    let exoneration: { code: string; value: number } | null = null;
+    try {
+        exoneration = getExonerationFromRemarks(remarks);
+    } catch (error) {
+        throw new Error(
+            `Row ${row[0]}: ${error instanceof Error ? error.message : 'Error parsing exoneration from remarks.'}`
+        );
+    }
     
     materials.push({
         orderNumber,
@@ -196,6 +271,7 @@ export async function parseMaterialExcel(file: File): Promise<MaterialRow[]> {
         add,
         remove,
         remarks,
+        exoneration,
     });
   }
 

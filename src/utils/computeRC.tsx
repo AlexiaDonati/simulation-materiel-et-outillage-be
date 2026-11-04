@@ -20,8 +20,6 @@ export interface ResultRC {
     correction6X3: number;
 }
 
-const imposition = 1;
-
 const coefficients = new Map<number, number>([
     [1919, 11.49],
     [1920, 6.15],
@@ -68,6 +66,14 @@ function getCoefficient(year: number): number {
     return coefficients.get(year) ?? 1;
 }
 
+function getImpositionPercentage(exoneration: number | null): number {
+    if (exoneration === null) {
+        return 100;
+    }
+
+    return 100 - exoneration
+}
+
 function getSum(materials: MaterialRow[], code: number | null): number {
     if (!materials) {
         return 0;
@@ -79,13 +85,15 @@ function getSum(materials: MaterialRow[], code: number | null): number {
             continue;
         }
 
-        let sumi = material.add.value;
+        let sum_i = material.add.value;
         if(material.remove !== null) {
-            sumi -= material.remove.value;
+            sum_i -= material.remove.value;
         }
         
         const coeff = getCoefficient(material.add.year);
-        sum += sumi * coeff;
+        const imposition = getImpositionPercentage(material.exoneration?.value || null) / 100;
+
+        sum += sum_i * coeff * imposition;
     }
 
     return sum;
@@ -169,9 +177,9 @@ export async function computeRC(materials: MaterialRow[]): Promise<ResultRC> {
                 calcul -= material.remove.value
             }
 
-            calcul *= imposition; // TODO: use the actual imposition percentage
+            const imposition = getImpositionPercentage(material.exoneration?.value || null) / 100;
 
-            calcul *= coeff
+            calcul *= coeff * imposition;
 
             seuil += calcul;
         }
