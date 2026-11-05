@@ -1,11 +1,21 @@
 :root {
+  font-family: "Titillium Web-Regular", Helvetica;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  --color-primary60: rgba(8, 97, 172, 1);
+  --color-primary80: rgba(6, 68, 120, 1);
+
+  --color-secondary70: rgba(0, 124, 147, 1);
+
   --color-danger10: rgba(252, 229, 231, 1);
   --color-danger70: rgba(184, 30, 43, 1);
+
+  --color-neutral20: rgba(203, 204, 208, 1);
+  --color-neutral50: rgba(109, 110, 114, 1); 
 
   @media (max-width: 1024px) {
     font-size: 16px;
@@ -14,6 +24,8 @@
 
 body {
   margin: 0;
+}
 
-  font-family: "Titillium Web-Regular", Helvetica;
+a {
+  color: var(--color-primary80);
 }

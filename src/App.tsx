@@ -3,6 +3,7 @@ import { toast, Toaster, ToastBar } from 'react-hot-toast';
 
 import { parseMaterialExcel, type MaterialRow, } from './utils/parseExcel';
 
+import ExcelUpload from './ExcelUpload.js';
 import MaterialsTable from './MaterialsTable';
 import RC from './RC.js';
 
@@ -12,20 +13,13 @@ import closeIcon from './icons/close.svg';
 import errorIcon from './icons/error.svg';
 
 function App() {
-  const [fileName, setFileName] = useState('')
-
   const [materials, setMaterials] = useState<MaterialRow[]>([]); 
   const [error, setError] = useState<string | null>(null);
 
-  const handleFileUpload = async ( 
-    event: React.ChangeEvent<HTMLInputElement>, 
-  ) => { 
-    const file = event.target.files?.[0]; 
+  const handleFileUpload = async (file: File) => { 
     if (!file) { 
       return; 
     } 
-
-    setFileName(file.name);
 
     setError(null); 
 
@@ -33,7 +27,6 @@ function App() {
     
     try { 
       const rows = await parseMaterialExcel(file); 
-      
       setMaterials(rows); 
     } catch (error) { 
       setError( 
@@ -82,24 +75,14 @@ function App() {
       </Toaster>
 
       <section id="center">
-        <div>
+        <div className="header">
           <h1>Simulation du calcul du revenu cadastral du matériel et outillage en Wallonie</h1>
           <a href="https://finances.belgium.be/fr/entreprises/donnees-patrimoniales/materiel-outillage" target="_blank" rel="noopener noreferrer">
             Lien vers la documentation officielle
           </a>
         </div>
 
-        <div>
-          <label htmlFor="excel-upload">Uploader le fichier Excel à calculer</label>
-
-          <input 
-            type="file" 
-            accept=".xlsx,.xls" 
-            onChange={handleFileUpload} 
-          />
-
-          {fileName && ( <p> Fichier sélectionné: <strong>{fileName}</strong> </p> )} 
-        </div>
+        <ExcelUpload handleFileUpload={handleFileUpload} />
 
         {error && ( <p role="alert"> {error} </p> )} 
           
