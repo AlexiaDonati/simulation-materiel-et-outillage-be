@@ -9,7 +9,7 @@
     border-color: var(--color-primary60);
 
     padding: 16px;
-    
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -26,19 +26,13 @@
     font-family: "Titillium Web-Bold", Helvetica;
     color: var(--color-primary60); 
     
-    font-size: 16px; 
-    font-weight: 700; 
-    letter-spacing: 0; 
-    line-height: normal;
+    font-weight: 700 !important;
 }
 
 .file-info {
     color: var(--color-neutral50); 
     
-    font-size: 12px; 
-    font-weight: 400; 
-    letter-spacing: 0; 
-    line-height: normal;
+    font-size: 12px !important;
 }
 
 .icon-container {

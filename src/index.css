@@ -19,6 +19,9 @@
 
   @media (max-width: 1024px) {
     font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0; 
+    line-height: normal;
   }
 }
 
@@ -26,6 +29,50 @@ body {
   margin: 0;
 }
 
+h1 {
+  font-family: "Titillium Web-Bold", Helvetica;
+  font-size: 28px !important;
+
+  color: var(--color-secondary70);
+}
+
+h2 {
+  font-family: "Titillium Web-SemiBold", Helvetica;
+  font-size: 24px !important;
+
+  color: var(--color-secondary70);
+}
+
+h3 {
+  font-family: "Titillium Web-Bold", Helvetica;
+  font-size: 20px !important;
+
+  color: var(--color-secondary70);
+}
+
 a {
   color: var(--color-primary80);
+}
+
+button {
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 8px; 
+
+  background-color: var(--color-primary60); 
+
+  border-radius: 8px; 
+  
+  padding: 16px 32px; 
+  position: relative; 
+  
+  font-family: "Titillium Web-Bold", Helvetica; 
+  color: #ffffff;  
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important; 
+  line-height: normal !important;
+
+  width: fit-content; 
 }
