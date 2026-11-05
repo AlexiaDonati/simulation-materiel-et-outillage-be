@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast, Toaster, ToastBar } from 'react-hot-toast';
 
 import { parseMaterialExcel, type MaterialRow, } from './utils/parseExcel';
 
@@ -6,6 +7,9 @@ import MaterialsTable from './MaterialsTable';
 import RC from './RC.js';
 
 import './App.css'
+
+import closeIcon from './icons/close.svg';
+import errorIcon from './icons/error.svg';
 
 function App() {
   const [fileName, setFileName] = useState('')
@@ -42,6 +46,41 @@ function App() {
 
   return (
     <>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+
+        toastOptions={{
+          duration: 10000,
+          className: 'toast',
+
+          error: {
+            className: 'toast error',
+            icon: <img alt="error" src={errorIcon} />,
+          }
+        }}
+      >
+        {(t) => (
+          <ToastBar toast={t}>
+            {({ icon, message }) => (
+              <>
+                <div className="toast-icon"> 
+                  {icon}
+                </div>
+
+                <div className="toast-message">
+                  {message}
+                </div>
+
+                <div className="toast-icon" onClick={() => toast.dismiss(t.id)}> 
+                  <img alt="close" src={closeIcon} /> 
+                </div>
+              </>
+            )}
+          </ToastBar>
+        )}
+      </Toaster>
+
       <section id="center">
         <div>
           <h1>Simulation du calcul du revenu cadastral du matériel et outillage en Wallonie</h1>
@@ -73,7 +112,7 @@ function App() {
         <MaterialsTable materials={materials} onChange={setMaterials}/>
       </section>
     </>
-  )
+  );
 }
 
 export default App

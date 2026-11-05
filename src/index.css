@@ -4,6 +4,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  --color-danger10: rgba(252, 229, 231, 1);
+  --color-danger70: rgba(184, 30, 43, 1);
+
   @media (max-width: 1024px) {
     font-size: 16px;
   }
@@ -11,4 +14,6 @@
 
 body {
   margin: 0;
+
+  font-family: "Titillium Web-Regular", Helvetica;
 }

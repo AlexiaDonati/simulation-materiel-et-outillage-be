@@ -8,6 +8,8 @@ import 'handsontable/styles/ht-theme-main.css';
 
 registerAllModules();
 
+import toast from "react-hot-toast";
+
 import type { MaterialRow } from './utils/parseExcel';
 import { getExonerationFromRemarks } from './utils/parseExcel';
 
@@ -258,13 +260,13 @@ export default function MaterialsTable({ materials, onChange } : Props) {
                             } 
 
                             if (!Number.isFinite(Number(newValue)) || Number(newValue) < 1900 || Number(newValue) > 2100) { 
-                                console.error(`Row ${row}: Year must be between 1900 and 2100.`); 
+                                toast.error(`Row ${row}: Year must be between 1900 and 2100.`); 
                                 error = true;
                                 break; 
                             } 
 
                             if(material.remove && Number(newValue) > material.remove.year){
-                                console.error(`Row ${row}: Remove year must be greater or equal than add year`); 
+                                toast.error(`Row ${row}: Remove year must be greater or equal than add year`); 
                                 error = true;
                                 break; 
                             }
@@ -279,7 +281,7 @@ export default function MaterialsTable({ materials, onChange } : Props) {
                             } 
 
                             if(material.remove && Number(newValue) < material.remove.value){
-                                console.error(`Row ${row}: Remove value must be smaller or equal than add year`); 
+                                toast.error(`Row ${row}: Remove value must be smaller or equal than add year`); 
                                 error = true;
                                 break; 
                             }
@@ -296,7 +298,7 @@ export default function MaterialsTable({ materials, onChange } : Props) {
                                 material.add.code = 4;
                             } 
                             else {
-                                console.error(`Row ${row}: Type must be "Neuf" or "Occasion".`); 
+                                toast.error(`Row ${row}: Type must be "Neuf" or "Occasion".`); 
                                 error = true;
                             }
 
@@ -308,13 +310,13 @@ export default function MaterialsTable({ materials, onChange } : Props) {
                             } 
 
                             if (!Number.isFinite(Number(newValue)) || Number(newValue) < 1900 || Number(newValue) > 2100) { 
-                                console.error(`Row ${row}: Year must be between 1900 and 2100.`); 
+                                toast.error(`Row ${row}: Year must be between 1900 and 2100.`); 
                                 error = true;
                                 break; 
                             } 
 
                             if(Number(newValue) < material.add.year){
-                                console.error(`Row ${row}: Remove year must be greater or equal than add year`); 
+                                toast.error(`Row ${row}: Remove year must be greater or equal than add year`); 
                                 error = true;
                                 break; 
                             }
@@ -333,7 +335,7 @@ export default function MaterialsTable({ materials, onChange } : Props) {
                             } 
 
                             if(Number(newValue) > material.add.value){
-                                console.error(`Row ${row}: Remove value must be smaller or equal than add value`); 
+                                toast.error(`Row ${row}: Remove value must be smaller or equal than add value`); 
                                 error = true;
                                 break; 
                             }
@@ -356,7 +358,7 @@ export default function MaterialsTable({ materials, onChange } : Props) {
                                 try {
                                     exoneration = getExonerationFromRemarks(material.remarks);
                                 } catch (error) {
-                                    console.error(`Row ${row}: ${error instanceof Error ? error.message : 'Invalid exoneration format.'}`);
+                                    toast.error(`Row ${row}: ${error instanceof Error ? error.message : 'Invalid exoneration format.'}`);
                                     error = true;
                                     break;
                                 }

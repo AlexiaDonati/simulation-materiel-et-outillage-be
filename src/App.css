@@ -25,3 +25,48 @@
 .section-border {
   border-right: 3px solid #333 !important;
 }
+
+.toast {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+
+  box-sizing: border-box;
+  min-width: 350px;
+  max-width: min(800px, calc(100vw - 32px));
+
+  padding: 16px;
+
+  border-radius: 8px;
+  border-top: 4px solid;
+
+  color: #000000;
+  font-size: 14px !important;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.toast.error {
+  background-color: var(--color-danger10);
+  border-color: var(--color-danger70);
+}
+
+.toast-message {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.toast-icon {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.toast-icon img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
