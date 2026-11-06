@@ -7,6 +7,12 @@ const coeffRC = 0.0159;
 
 export default function RC({ materials }: { materials: MaterialRow[] }) {
     const [resultRC, setResultRC] = useState<ResultRC | null>(null);
+    
+    const [prevMaterials, setprevMaterials] = useState(materials);
+    if (materials !== prevMaterials) {
+        setprevMaterials(materials);
+        setResultRC(null);
+    }
 
     const handleComputeRC = async () => {
         const resultRC: ResultRC = await computeRC(materials);
@@ -17,7 +23,10 @@ export default function RC({ materials }: { materials: MaterialRow[] }) {
         <>
             {materials.length > 0 && (
                 <div className="container">
-                    <h2>Calcul du revenu cadastral</h2>
+                    <div className="container-header">
+                        <h2>Calcul du revenu cadastral</h2>
+                        <span> Nombre de lignes présentes dans le formulaire 43D : {materials.length} </span> 
+                    </div>
 
                     {resultRC && (
                         <div className="rc-results">
@@ -32,7 +41,7 @@ export default function RC({ materials }: { materials: MaterialRow[] }) {
                                 </ul>
                                 <p>Total 6F : {resultRC.total6F.toFixed(2)}</p>
                             </div>
-                            
+
                             <div>
                                 <h3>6X3 pour 2005</h3>
                                 <ul><li key={2005}>2005 : {resultRC.sum6X3.toFixed(2)}</li></ul>

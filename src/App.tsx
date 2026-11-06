@@ -86,11 +86,7 @@ function App() {
 
         {error && ( <p role="alert"> {error} </p> )} 
           
-        <p> Nombre de lignes présentes dans le formulaire 43D: {materials.length} </p> 
-          
         <RC materials={materials} />
-
-        <hr />
         
         <MaterialsTable materials={materials} onChange={setMaterials}/>
       </section>
