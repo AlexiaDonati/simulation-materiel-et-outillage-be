@@ -9,9 +9,14 @@ import 'handsontable/styles/ht-theme-main.css';
 registerAllModules();
 
 import toast from "react-hot-toast";
+import { Tooltip } from 'react-tooltip'
 
 import type { MaterialRow } from './utils/parseExcel';
 import { getExonerationFromRemarks } from './utils/parseExcel';
+
+import './MaterialsTable.css'
+
+import InformationIcon from './icons/information.svg';
 
 type TableRows = (MaterialRow | null)[];
 
@@ -96,6 +101,17 @@ export default function MaterialsTable({ materials, onChange } : Props) {
     };
 
     return (
+        <>
+        <Tooltip anchorSelect="#remarques" className="tooltip" classNameArrow="tooltip-arrow" place="top-end">
+            <p>
+                Il est possible de proposer à l'Administration une exonération proportionnelle pour certaines lignes de matériel et outillage. 
+                <br />
+                Cette proposition prend la forme d'un code à trois chiffres et d'un pourcentage d'exonération proposé (ex : 80% SHE)
+                <br />
+                et est à indiquer dans la colonne 6 "Remarques/informations supplémentaires".
+            </p>
+        </Tooltip>
+
         <HotTable className="table"
             data={tableRows.map((material) =>
                 materialToTableData(material)
@@ -103,7 +119,7 @@ export default function MaterialsTable({ materials, onChange } : Props) {
 
             nestedHeaders={[
                 ['', '', { label: 'Investissement', colspan: 3 }, { label: 'Désinvestissement', colspan: 2 }, ''],
-                ["Numéro d'ordre", "Description", "Année", "Valeur", "Type", "Année", "Valeur", "Remarques"],
+                ["Numéro d'ordre", "Description", "Année", "Valeur", "Type", "Année", "Valeur", "Remarques"]
             ]}
             
             columns={[
@@ -385,7 +401,7 @@ export default function MaterialsTable({ materials, onChange } : Props) {
 
             // --- css classList ---
 
-            afterGetColHeader={(col, TH) => {
+            afterGetColHeader={(col, TH, level) => {
                 const borderAfterColumns = [0, 1, 4, 6];
 
                 const colSpan = Number(TH.getAttribute('colspan') || 1);
@@ -393,6 +409,28 @@ export default function MaterialsTable({ materials, onChange } : Props) {
 
                 if (borderAfterColumns.includes(lastColumn)) {
                     TH.classList.add('section-border');
+                }
+
+                if (col === 7 && level === 1) {
+                    if (!TH.querySelector('.remarques-header')) {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'remarques-header';
+
+                        const label = document.createElement('span');
+                        label.textContent = TH.textContent;
+
+                        const icon = document.createElement('img');
+                        icon.src = InformationIcon;
+                        icon.alt = 'Information';
+                        icon.id = 'remarques';
+                        icon.className = 'remarques-info';
+
+                        wrapper.appendChild(label);
+                        wrapper.appendChild(icon);
+
+                        TH.textContent = '';
+                        TH.appendChild(wrapper);
+                    }
                 }
             }}
 
@@ -412,5 +450,6 @@ export default function MaterialsTable({ materials, onChange } : Props) {
 
             licenseKey="non-commercial-and-evaluation" // for non-commercial use only
         />
+        </>
     );
 }

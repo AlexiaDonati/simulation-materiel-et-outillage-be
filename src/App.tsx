@@ -9,8 +9,8 @@ import RC from './RC.js';
 
 import './App.css'
 
-import closeIcon from './icons/close.svg';
-import errorIcon from './icons/error.svg';
+import CloseIcon from './icons/close.svg';
+import ErrorIcon from './icons/error.svg';
 
 function App() {
   const [materials, setMaterials] = useState<MaterialRow[]>([]); 
@@ -49,7 +49,7 @@ function App() {
 
           error: {
             className: 'toast error',
-            icon: <img alt="error" src={errorIcon} />,
+            icon: <img alt="error" src={ErrorIcon} />,
           }
         }}
       >
@@ -66,7 +66,7 @@ function App() {
                 </div>
 
                 <div className="toast-icon" onClick={() => toast.dismiss(t.id)}> 
-                  <img alt="close" src={closeIcon} /> 
+                  <img alt="close" src={CloseIcon} /> 
                 </div>
               </>
             )}
@@ -77,6 +77,9 @@ function App() {
       <section id="center">
         <div className="header">
           <h1>Simulation du calcul du revenu cadastral du matériel et outillage en Wallonie</h1>
+
+          <p>Cet outil n'est pas un service officiel de l'administration belge. Il est développé indépendamment et n'est ni affilié à, ni approuvé par, ni géré par une autorité publique.</p>
+
           <a href="https://finances.belgium.be/fr/entreprises/donnees-patrimoniales/materiel-outillage" target="_blank" rel="noopener noreferrer">
             Lien vers la documentation officielle
           </a>
@@ -90,6 +93,10 @@ function App() {
         
         <MaterialsTable materials={materials} onChange={setMaterials}/>
       </section>
+
+      <footer>
+        
+      </footer>
     </>
   );
 }

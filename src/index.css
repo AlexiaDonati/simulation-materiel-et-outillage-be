@@ -6,6 +6,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  --color-primary10: rgba(226, 239, 249, 1);
   --color-primary60: rgba(8, 97, 172, 1);
   --color-primary80: rgba(6, 68, 120, 1);
 

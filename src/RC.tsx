@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { Tooltip } from 'react-tooltip'
 
 import { type MaterialRow } from './utils/parseExcel';
 import { type ResultRC, computeRC } from './utils/computeRC';
+
+import InformationIcon from './icons/information.svg';
 
 const coeffRC = 0.0159;
 
@@ -63,17 +66,32 @@ export default function RC({ materials }: { materials: MaterialRow[] }) {
                                 </ul>
                             </div>
 
-                            <div>
-                                <p>Occasion après 2004 : {resultRC.occasion.toFixed(2)}</p>
+                            <div className="results-column">
+                                <div>
+                                    <h3>Occasion et seuil</h3>
+                                    <p>Occasion après 2004 : {resultRC.occasion.toFixed(2)}</p>
+                                    <p>Seuil : {resultRC.seuil.toFixed(2)}</p>
+                                </div>
 
-                                <p>Seuil : {resultRC.seuil.toFixed(2)}</p>
+                                <div className="container">
+                                    <div className="container-header">
+                                        <h3>Resultat après correction</h3>                      
 
-                                <h3>Correction du seuil et occasion</h3>
+                                        <a id="result"><img alt="result" src={InformationIcon}/></a>
+                                        <Tooltip anchorSelect="#result" className="tooltip" classNameArrow="tooltip-arrow" place="top-end">
+                                            <p>
+                                                Les montants calculés sont fournis à titre purement informatif 
+                                                <br />
+                                                et ne constituent ni une décision administrative, ni un avis juridique ou professionnel.
+                                            </p>
+                                        </Tooltip>
+                                    </div>
 
-                                <p>6F : {(resultRC.correction6F * coeffRC).toFixed(2)}</p>
-                                <p>6X3 : {(resultRC.correction6X3 * coeffRC).toFixed(2)}</p>
-                                <p>6X4 : {(resultRC.total6X4 * coeffRC).toFixed(2)}</p>
-                                <p>6X10 : {((resultRC.addYear6X10_2015 + resultRC.addYear6X10_2016) * coeffRC).toFixed(2)}</p>
+                                    <p>6F : {(resultRC.correction6F * coeffRC).toFixed(2)}</p>
+                                    <p>6X3 : {(resultRC.correction6X3 * coeffRC).toFixed(2)}</p>
+                                    <p>6X4 : {(resultRC.total6X4 * coeffRC).toFixed(2)}</p>
+                                    <p>6X10 : {((resultRC.addYear6X10_2015 + resultRC.addYear6X10_2016) * coeffRC).toFixed(2)}</p>
+                                </div>
                             </div>
                         </div>
                     )}
