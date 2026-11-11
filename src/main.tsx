@@ -1,10 +1,18 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import { BrowserRouter, Routes, Route } from 'react-router';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+import App from './App.tsx';
+import Theory from './Theory.tsx';
+
+import './index.css'
+
+const root = document.getElementById("root");
+
+createRoot(root!).render(
+  <BrowserRouter>
+    <Routes>
+      <Route path="/simulation-materiel-et-outillage-be/" element={<App />} />
+      <Route path="/simulation-materiel-et-outillage-be/information" element={<Theory />} />
+    </Routes>
+  </BrowserRouter>
 )

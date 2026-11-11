@@ -1,0 +1,75 @@
+.Accordion {
+    display: flex;
+    flex-direction: column;
+    
+    gap: 16px;
+
+    margin: 16px;
+}
+
+.Item{
+    border: 1px solid var(--color-neutral20);
+    border-radius: 8px;
+}
+
+.Header {
+    margin: 0;
+}
+
+.Trigger {
+    box-sizing: border-box;
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+    padding: 8px 16px;
+
+    color: var(--color-primary60);
+    text-align: left;
+
+    background-color: transparent;
+    border: none;
+
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.Icon {
+    transition: transform 100ms ease-out;
+
+    [data-panel-open] > & {
+        transform: rotate(180deg);
+    }
+}
+
+.Panel {
+    box-sizing: border-box;
+    height: var(--accordion-panel-height);
+
+    overflow: hidden;
+  
+    transition: height 150ms ease-out;
+
+    &[data-starting-style],
+    &[data-ending-style] {
+        height: 0;
+    }
+}
+
+.Content {
+    padding: 8px 16px;
+}
+
+table, td, th {
+    border: 1px solid black;
+}
+
+table{
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+}

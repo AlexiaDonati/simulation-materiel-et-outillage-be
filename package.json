@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@base-ui/react": "^1.9.0",
     "@handsontable/react-wrapper": "^18.1.2",
     "handsontable": "^18.1.2",
     "react": "^19.2.8",
