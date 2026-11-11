@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, Link } from "react-router";
+import { NavLink } from "react-router";
 
 import { toast, Toaster, ToastBar } from 'react-hot-toast';
 
@@ -82,9 +82,13 @@ function App() {
 
           <p>Cet outil n'est pas un service officiel de l'administration belge. Il est développé indépendamment et n'est ni affilié à, ni approuvé par, ni géré par une autorité publique.</p>
 
-          <a href="https://finances.belgium.be/fr/entreprises/donnees-patrimoniales/materiel-outillage" target="_blank" rel="noopener noreferrer">
-            Lien vers la documentation officielle
-          </a>
+          <div>
+            <a href="https://finances.belgium.be/fr/entreprises/donnees-patrimoniales/materiel-outillage" target="_blank" rel="noopener noreferrer">
+              Lien vers la documentation officielle
+            </a>
+            <span> / </span>
+            <NavLink to="/simulation-materiel-et-outillage-be/information">Lien vers un complément d'information</NavLink>
+          </div>
         </div>
 
         <ExcelUpload handleFileUpload={handleFileUpload} />
