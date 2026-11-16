@@ -62,20 +62,20 @@
     padding: 8px 16px;
 }
 
-table, td, th {
+.Accordion table, td, th {
     border: 1px solid black;
 }
 
-table{
+.Accordion table{
     border-collapse: collapse;
 }
 
-th, td {
+.Accordion th, td {
     padding: 10px;
 }
 
-table td:first-child, 
-table th:first-child {
+.Accordion table td:first-child, 
+.Accordion table th:first-child {
     width: 1%;
     white-space: nowrap;
 }
