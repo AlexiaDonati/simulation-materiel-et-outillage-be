@@ -84,7 +84,7 @@ function App() {
 
           <div>
             <a href="https://finances.belgium.be/fr/entreprises/donnees-patrimoniales/materiel-outillage" target="_blank" rel="noopener noreferrer">
-              Lien vers la documentation officielle
+              Lien vers la documentation officielle et le formulaire 43D
             </a>
             <span> / </span>
             <NavLink to="/simulation-materiel-et-outillage-be/information">Lien vers un complément d'information</NavLink>

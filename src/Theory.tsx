@@ -1,3 +1,5 @@
+import { NavLink } from "react-router";
+
 import { Accordion } from '@base-ui/react/accordion';
 
 import ArrowIcon from './icons/arrow.svg';
@@ -6,7 +8,14 @@ import Pdf43Dter from './assets/20241212-43Dter-fr.pdf';
 import './Theory.css';
 
 export default function Theory() {
-    return (
+    return (<>
+        <div className='container-header'>
+            <NavLink to="/simulation-materiel-et-outillage-be/" className="return-button">
+                <img alt="Arrow" className="Icon return" src={ArrowIcon} />
+                <span>Retour</span>
+            </NavLink>
+        </div>
+
         <Accordion.Root className="Accordion">
             <Accordion.Item className="Item">
                 <Accordion.Header className="Header">
@@ -279,6 +288,87 @@ export default function Theory() {
                     </div>
                 </Accordion.Panel>
             </Accordion.Item>
+            <Accordion.Item className="Item">
+                <Accordion.Header className="Header">
+                    <Accordion.Trigger className="Trigger">
+                        <span>Motifs d'exonération</span>
+                        <a className="Icon"><img alt="Arrow" src={ArrowIcon} /></a>
+                    </Accordion.Trigger>
+                </Accordion.Header>
+
+                <Accordion.Panel className="Panel">
+                    <div className="Content">
+                        <table>
+                            <tr>
+                                <th>Année</th>
+                                <th>Code</th>
+                                <th>Détail</th>
+                                <th>Justification légale</th>
+                            </tr>
+                            <tr>
+                                <td><p>2006 - 2014</p> <p>&</p> <p>2017 - aujourd'hui</p></td>
+                                <td>X4</td>
+                                <td>Neuf</td>
+                                <td>
+                                    PLAN MARSHALL - Matériel et outillage neuf exonéré
+                                    Art. 253 3°ter du CIR92 des nouveaux investissements en
+                                    matériel et outillage visés à l'Article 471, § 3, acquis ou
+                                    constitués à l'état neuf sur le territoire de la Région
+                                    wallonne, à partir du 1er janvier 2006.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2015 - 2016</td>
+                                <td>X10</td>
+                                <td>Neuf</td>
+                                <td>DECRET Wallon du 12/12/2014</td>
+                            </tr>
+                            <tr>
+                                <td>2005</td>
+                                <td>X3</td>
+                                <td><p>Neuf</p><p>-</p><p>Seuil au 01.01.2005</p></td>
+                                <td>
+                                    Seuil fixé au 1er janvier 2005 : RC qui existait ou qui aurait
+                                    dû exister au 01.01.2005 imposé ou bénéficiant d'une
+                                    exonération économique. Le 3° bis de l'article 253 C.I.R. 92
+                                    n'exonère en effet que les augmentations de revenu cadastral
+                                    par rapport à ce seuil.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1830 - 2004</td>
+                                <td>F</td>
+                                <td>Neuf & Occasion</td>
+                                <td>Matériel et outillage imposable au précompte immobilier</td>
+                            </tr>
+                            <tr>
+                                <td>2005 - aujourd'hui</td>
+                                <td>F</td>
+                                <td>Occasion</td>
+                                <td>
+                                    <p>Matériel et outillage imposable au précompte immobilier</p>
+                                    <p>Valeur à neuf de l'outillage d'occasion à déclarer :
+                                    - de 5 ans : +50% de valeur du prix de l'occasion ;
+                                    de 5 ans à 15 ans : +100 % de valeur du prix de l'occasion ;
+                                    + de 15 ans : 200 % de valeur du prix de l'occasion.</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1830 - aujourd'hui</td>
+                                <td>X2</td>
+                                <td><p>Neuf & Occasion</p><p>-</p><p>Moins de 795 € de RC (= Moins de 50.000 euros d'investissement)</p></td>
+                                <td>
+                                    Art. 253 4° - Exonération du matériel et de l'outillage visés à
+                                    l'Article 471, § 3, lorsque ce revenu cadastral, établi
+                                    conformément aux articles 483 et 484, après déduction du
+                                    revenu cadastral exonéré en application du 3°bis et 3°ter,
+                                    n'atteint pas 795 EUR par parcelle cadastrale.
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </Accordion.Panel>
+            </Accordion.Item>
         </Accordion.Root>
-    );
+    </>);
 }
