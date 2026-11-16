@@ -1,5 +1,3 @@
-import * as XLSX from 'xlsx';
-
 // list of possible exoneration codes
 const EXONERATION_CODES = [
     'ADM',
@@ -114,36 +112,47 @@ export function getExonerationFromRemarks(remarks: string): { code: string; valu
     return exoneration;
 }
 
-export async function parseMaterialExcel(file: File): Promise<MaterialRow[]> {
-  const buffer = await file.arrayBuffer();
-
-  const workbook = XLSX.read(buffer, {
-    type: 'array',
-  });
-
-  // Take the first worksheet
-  const sheetName = workbook.SheetNames[0];
-
-  if (!sheetName) {
-    throw new Error('The Excel file contains no worksheets.');
-  }
-
-  const worksheet = workbook.Sheets[sheetName];
-
-  // Read the worksheet as arrays, preserving column positions.
-  const rows: unknown[][] = XLSX.utils.sheet_to_json(worksheet, {
-    header: 1,
-    defval: '',
-    range: 19, // Excel row 20; zero-based internally
-  });
-  
-  const materials: MaterialRow[] = [];
-  
-  for (const row of rows) { 
-    if (row[0] === '3. Déclarant'){ // We reached the end of the material list, stop parsing
-        break; 
+function checkAdd(add : { year: number, value: number, code: 3 | 4}){
+    if(add.year < 1900 || add.year > 2100) {
+        throw new Error(
+            `Year must be between 1900 and 2100.`
+        );
     }
 
+    if(add.year === null || add.value === null) {
+        throw new Error(
+            `Both year and value must be provided for the add operation.`
+        );
+    }
+}
+
+function checkRemove(remove : { year: number, value: number }, add : { year: number, value: number, code: 3 | 4}){
+    if(remove.year < 1900 || remove.year > 2100) {
+        throw new Error(
+            `Year must be between 1900 and 2100.`
+        );
+    }
+    if (remove.year === null || remove.value === null) {
+        throw new Error(
+            `Both year and value must be provided for the remove operation.`
+        );
+    }
+
+    // ---
+
+    if (remove.year < add.year) {
+        throw new Error(
+            `Remove year cannot be earlier than add year.`
+        );
+    }
+    if (remove.value > add.value) {
+        throw new Error(
+            `Remove value cannot be greater than add value.`
+        );
+    }
+}
+
+function parse43DRow(row : unknown[]): MaterialRow | undefined {
     const orderNumber = toString(row[0]); // 1
     const description = toString(row[1]); // 2
     
@@ -172,8 +181,9 @@ export async function parseMaterialExcel(file: File): Promise<MaterialRow[]> {
         fraisValue === null && 
         removeYear === null && 
         removeValue === null 
+        
     if (isEmpty) { 
-        continue; 
+        return undefined; 
     }
 
     // add
@@ -196,19 +206,16 @@ export async function parseMaterialExcel(file: File): Promise<MaterialRow[]> {
     const add = hasNew
         ? { year: newYear!, value: newValue!, code: 3 as const }
         : { year: acquisitionYear!, value: acquisitionValue!, code: 4 as const };
-    
-    if(add.year < 1900 || add.year > 2100) {
+
+    try{
+        checkAdd(add);
+    }
+    catch(e){
         throw new Error(
-            `Row ${row[0]}: Year must be between 1900 and 2100.`
+            `Row ${row[0]} : ${e}`
         );
     }
-
-    if(add.year === null || add.value === null) {
-        throw new Error(
-            `Row ${row[0]}: Both year and value must be provided for the add operation.`
-        );
-    }
-
+        
     // frais
 
     const hasFrais = fraisYear !== null || fraisValue !== null;
@@ -225,34 +232,20 @@ export async function parseMaterialExcel(file: File): Promise<MaterialRow[]> {
 
     const hasRemove = removeYear !== null || removeValue !== null
 
-    if (hasRemove) {
-        if (removeYear === null || removeValue === null) { // If either removeYear or removeValue is provided but the other is not, we throw an error.
-            throw new Error(
-                `Row ${row[0]}: Both year and value must be provided for the remove operation.`
-            );
-        }
-
-        if(removeYear! < 1900 || removeYear! > 2100) {
-            throw new Error(
-                `Row ${row[0]}: Year must be between 1900 and 2100.`
-            );
-        }
-
-        if (removeYear! < add.year) {
-            throw new Error(
-                `Row ${row[0]}: Remove year cannot be earlier than add year.`
-            );
-        }
-        if (removeValue! > add.value) {
-            throw new Error(
-                `Row ${row[0]}: Remove value cannot be greater than add value + frais value.`
-            );
-        }
-    }
-
     const remove = hasRemove 
         ? { year: removeYear!, value: removeValue! } 
         : null;
+
+    if (remove) {
+        try{
+            checkRemove(remove, add);
+        }
+        catch(e){
+            throw new Error(
+                `Row ${row[0]} : ${e}`
+            );
+        }
+    }
 
     // exoneration
     
@@ -265,15 +258,137 @@ export async function parseMaterialExcel(file: File): Promise<MaterialRow[]> {
         );
     }
     
-    materials.push({
+    // --- 
+
+    return{
         orderNumber,
         description,
         add,
         remove,
         remarks,
         exoneration,
-    });
-  }
+    };
+}
 
-  return materials;
+function parseListingRow(row : unknown[]): MaterialRow | undefined {
+    const orderNumber = toString(row[1]); // 1
+    const description = toString(row[2]); // 2
+    
+    const newYear = toNumber(row[0]); // 3a
+    const newValue = toNumber(row[3]); // 3b 
+    
+    // column 4 is from an old legacy form so it is ignored
+
+    const ref = toString(row[5]);
+    
+    const exonerationValue = toNumber(row[6]);
+    const exonerationCode = toString(row[7]);
+    const remarks = exonerationValue + " " + exonerationCode;
+
+    const removeYear = toNumber(row[8]); // 5c
+    const removeValue = toNumber(row[10]); // 5d
+
+    // ---
+
+    const isEmpty = 
+        newYear === null && 
+        newValue === null && 
+        removeYear === null && 
+        removeValue === null 
+        
+    if (isEmpty) { 
+        return undefined; 
+    }
+
+    // add
+
+    const isOccassion = ref.includes("OCCASION");
+    const add = isOccassion
+        ? { year: newYear!, value: newValue!, code: 4 as const }
+        : { year: newYear!, value: newValue!, code: 3 as const };
+
+    try{
+        checkAdd(add);
+    }
+    catch(e){
+        console.log(row)
+        throw new Error(
+            `Row ${row[1]} : ${e}`
+        );
+    }
+
+    // remove
+
+    const hasRemove = removeYear !== null || removeValue !== null
+
+    const remove = hasRemove 
+        ? { year: removeYear!, value: removeValue! } 
+        : null;
+
+    if (remove) {
+        try{
+            checkRemove(remove, add);
+        }
+        catch(e){
+            console.log(row)
+            throw new Error(
+                `Row ${row[1]} : ${e}`
+            );
+        }
+    }
+
+    // exoneration
+    
+    let exoneration: { code: string; value: number } | null = null;
+    try {
+        exoneration = getExonerationFromRemarks(remarks);
+    } catch (error) {
+        throw new Error(
+            `Row ${row[1]}: ${error instanceof Error ? error.message : 'Error parsing exoneration from remarks.'}`
+        );
+    }
+    
+    // ---
+
+    return{
+        orderNumber,
+        description,
+        add,
+        remove,
+        remarks,
+        exoneration,
+    };
+}
+
+export function parseMaterials(rows: unknown[][], formType: string): MaterialRow[] {
+  
+    const materials: MaterialRow[] = [];
+    
+    for (const row of rows) { 
+        if(formType === 'default'){
+            if (row[0] === '3. Déclarant'){ // We reached the end of the material list, stop parsing
+                break; 
+            }
+
+            const material = parse43DRow(row);
+            if(!material){
+                continue;
+            }
+
+            materials.push(material);
+        }
+        else if(formType === 'alt'){
+            const material = parseListingRow(row);
+            if(!material){
+                continue;
+            }
+
+            materials.push(material);
+        }
+        else{
+            throw new Error(`Unknown form name: ${formType}`);
+        } 
+    }
+
+    return materials;
 }

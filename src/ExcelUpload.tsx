@@ -1,14 +1,18 @@
 import { useState, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 
+import * as XLSX from 'xlsx';
+
 import uploadIcon from './icons/upload.svg';
 
 import './form.css';
 
-export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (file: File) => void }) {
+export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (rows: unknown[][], formType: string) => void }) {
+    const [formulaireType, setFormulaireType] = useState('default');
+
     const [fileName, setFileName] = useState("");
 
-    const processFile = function(file: File) {
+    const processFile = async function(file: File) {
         if (!file) {
             return;
         }
@@ -25,7 +29,28 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (f
 
         setFileName(file.name);
 
-        handleFileUpload(file);
+        const buffer = await file.arrayBuffer();
+
+        const workbook = XLSX.read(buffer, {
+            type: 'array',
+        });
+        
+        // Take the first worksheet
+        const sheetName = workbook.SheetNames[0];
+        
+        if (!sheetName) {
+            throw new Error('The Excel file contains no worksheets.');
+        }
+        
+        const worksheet = workbook.Sheets[sheetName];
+
+        const rows: unknown[][] = XLSX.utils.sheet_to_json(worksheet, {
+            header: 1,
+            defval: '',
+            range: formulaireType === 'default' ? 19 : 1,
+        });
+
+        handleFileUpload(rows, formulaireType);
     };
 
     // ref for the file input element
@@ -74,7 +99,29 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (f
         }
     };
 
-    return (
+    return (<>
+        <div>
+            <label>
+                <input 
+                    type="radio" 
+                    value="default" 
+                    checked={formulaireType === 'default'} 
+                    onChange={() => {setFormulaireType("default")}} 
+                /> 
+                Formulaire légal (43D)
+            </label>
+            <br />
+            <label>
+                <input 
+                    type="radio" 
+                    value="alt" 
+                    checked={formulaireType === 'alt'} 
+                    onChange={() => {setFormulaireType("alt")}} 
+                /> 
+                Formulaire alternatif (Listing)
+            </label>
+        </div>
+
         <form id="form-file-upload" 
             onDragEnter={handleDrag} 
             onClick={onButtonClick}
@@ -94,5 +141,5 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (f
 
             {isDragging && <div id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}></div>}
         </form>
-    );
+    </>);
 }

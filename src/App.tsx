@@ -3,7 +3,7 @@ import { NavLink } from "react-router";
 
 import { toast, Toaster, ToastBar } from 'react-hot-toast';
 
-import { parseMaterialExcel, type MaterialRow, } from './utils/parseExcel';
+import { parseMaterials, type MaterialRow, } from './utils/parseExcel';
 
 import ExcelUpload from './ExcelUpload.js';
 import MaterialsTable from './MaterialsTable';
@@ -18,18 +18,22 @@ function App() {
   const [materials, setMaterials] = useState<MaterialRow[]>([]); 
   const [error, setError] = useState<string | null>(null);
 
-  const handleFileUpload = async (file: File) => { 
-    if (!file) { 
+  const handleFileUpload = async (rows: unknown[][], formType: string) => { 
+    if (!rows) { 
       return; 
     } 
+
+    if(formType != 'default' && formType != 'alt'){
+      return;
+    }
 
     setError(null); 
 
     setMaterials([]); 
     
     try { 
-      const rows = await parseMaterialExcel(file); 
-      setMaterials(rows); 
+      const materialRows = await parseMaterials(rows, formType); 
+      setMaterials(materialRows); 
     } catch (error) { 
       setError( 
         error instanceof Error 
