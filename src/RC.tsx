@@ -86,8 +86,8 @@ export default function RC({ materials }: { materials: MaterialRow[] }) {
                                             </p>
                                         </Tooltip>
                                     </div>
-
-                                    <p>6F : {(resultRC.correction6F * coeffRC).toFixed(2)}</p>
+                                    
+                                    <p>{((resultRC.correction6F * coeffRC) >= 795 ? "6F" : ((resultRC.correction6F * coeffRC) < 159 ? "-" : "6X2"))} : {(resultRC.correction6F * coeffRC).toFixed(2)}</p>
                                     <p>6X3 : {(resultRC.correction6X3 * coeffRC).toFixed(2)}</p>
                                     <p>6X4 : {(resultRC.total6X4 * coeffRC).toFixed(2)}</p>
                                     <p>6X10 : {((resultRC.addYear6X10_2015 + resultRC.addYear6X10_2016) * coeffRC).toFixed(2)}</p>
