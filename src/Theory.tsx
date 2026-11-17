@@ -369,6 +369,59 @@ export default function Theory() {
                     </div>
                 </Accordion.Panel>
             </Accordion.Item>
+
+            <Accordion.Item className="Item">
+                <Accordion.Header className="Header">
+                    <Accordion.Trigger className="Trigger">
+                        <span>Description des formulaires acceptés</span>
+                        <a className="Icon"><img alt="Arrow" src={ArrowIcon} /></a>
+                    </Accordion.Trigger>
+                </Accordion.Header>
+
+                <Accordion.Panel className="Panel">
+                    <div className="Content">
+                        <ol>
+                            <li>
+                                <strong>Formulaire légal (43D)</strong> à télécharger sur le site du <a href="https://finances.belgium.be/fr/entreprises/donnees-patrimoniales/materiel-outillage" target="_blank" rel="noopener noreferrer">
+                                    SPF Finances (20240916-form43D-fr)
+                                </a>
+                                .
+
+                                <p>Article 474, CIR 92 (revenus 2025).</p>
+                                <p>
+                                    Sur demande de l'Administration générale de la documentation patrimoniale, 
+                                    le contribuable est, en outre, tenu de souscrire une déclaration portant 
+                                    les éléments nécessaires à l'établissement du revenu cadastral du matériel et de l'outillage. 
+                                </p>
+                                <p>   
+                                    Cette déclaration faite sur une formule délivrée par ladite administration au contribuable intéressé, 
+                                    doit être reproduite, dûment remplie et signée, dans le délai y indiqué, au fonctionnaire ou au service dont elle émane.
+                                </p>
+                            </li>
+                            
+                            <br />
+
+                            <li><strong>Formulaire alternatif (Listing)</strong> au format Excel (.xlsx ou .xls) ou texte (.txt) qui reprend les mêmes colonnes que le fichier utilisé par l'application EasyVal avec 3 modifications :
+                                <ol type="a">
+                                    <li>Utilisation de la virgule (,) comme séparateur décimal.</li>
+                                    <li>La colonne "% exon." contient le pourcentage d'exonération proposé.</li>
+                                    <li>Les désaffectations ne sont prises en compte que dans les colonnes I à K</li>
+                                </ol>
+                            </li>
+
+                            <br />
+
+                            <li><strong>Formulaire alternatif (EasyVal)</strong> au format Excel (.xlsx ou .xls) ou texte (.txt)
+                                <ol type="a">
+                                    <li>Utilisation du point (.) comme séparateur décimal.</li>
+                                    <li>La colonne "% imp." contient le pourcentage d'imposition proposé.</li>
+                                    <li>Les désaffectations ne sont prises en compte que dans les colonnes I à K</li>
+                                </ol>
+                            </li>
+                        </ol>
+                    </div>
+                </Accordion.Panel>
+            </Accordion.Item>
         </Accordion.Root>
     </>);
 }
