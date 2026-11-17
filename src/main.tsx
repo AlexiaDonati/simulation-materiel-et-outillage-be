@@ -9,10 +9,10 @@ import './index.css'
 const root = document.getElementById("root");
 
 createRoot(root!).render(
-  <BrowserRouter>
+  <BrowserRouter basename="/simulation-materiel-et-outillage-be" >
     <Routes>
-      <Route path="/simulation-materiel-et-outillage-be/" element={<App />} />
-      <Route path="/simulation-materiel-et-outillage-be/information" element={<Theory />} />
+      <Route path="" element={<App />} />
+      <Route path="/information" element={<Theory />} />
     </Routes>
   </BrowserRouter>
 )

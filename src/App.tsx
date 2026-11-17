@@ -91,7 +91,7 @@ function App() {
               Lien vers la documentation officielle et le formulaire 43D
             </a>
             <span> / </span>
-            <NavLink to="/simulation-materiel-et-outillage-be/information">Lien vers un complément d'information</NavLink>
+            <NavLink to="/information">Lien vers un complément d'information</NavLink>
           </div>
         </div>
 

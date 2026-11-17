@@ -10,7 +10,7 @@ import './Theory.css';
 export default function Theory() {
     return (<>
         <div className='container-header'>
-            <NavLink to="/simulation-materiel-et-outillage-be/" className="return-button">
+            <NavLink to="/" className="return-button">
                 <img alt="Arrow" className="Icon return" src={ArrowIcon} />
                 <span>Retour</span>
             </NavLink>
