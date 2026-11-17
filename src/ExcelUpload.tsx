@@ -10,12 +10,10 @@ import './form.css';
 export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (rows: unknown[][], formType: string) => void }) {
     const [formulaireType, setFormulaireType] = useState('default');
 
-    const [fileName, setFileName] = useState("");
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-    const processFile = async function(file: File) {
-        if (!file) {
-            return;
-        }
+    const processFile = async (file: File, formType: string) => {
+        if (!file) return;
 
         const fileExtension = file.name.toLowerCase().split('.').pop();
         const validExtensions = ["xlsx", "xls", "txt"];
@@ -26,42 +24,46 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (r
             return;
         }
 
-        setFileName(file.name);
+        try{
+            let rows: unknown[][] = [];
 
-        let rows: unknown[][] = [];
+            if (fileExtension === 'txt') {
+                const content = await file.text();
 
-        if (fileExtension === 'txt') {
-            const content = await file.text();
+                rows = content.split(/\r?\n/) // split the content into rows
+                    .slice(1) // skip column headers row
+                    .filter(row => row.trim() !== '') // filter out empty row
+                    .map(row => row.split('\t')); // split the rows into values
+            } 
+            else {
+                const buffer = await file.arrayBuffer();
 
-            rows = content.split(/\r?\n/) // split the content into rows
-                .slice(1) // skip column headers row
-                .filter(row => row.trim() !== '') // filter out empty row
-                .map(row => row.split('\t')); // split the rows into values
-        } 
-        else {
-            const buffer = await file.arrayBuffer();
+                const workbook = XLSX.read(buffer, {
+                    type: 'array',
+                });
+                
+                // Take the first worksheet
+                const sheetName = workbook.SheetNames[0];
+                
+                if (!sheetName) {
+                    toast.error('Le fichier Excel ne contient pas de feuille de calcul.');
+                    return;
+                }
+                
+                const worksheet = workbook.Sheets[sheetName];
 
-            const workbook = XLSX.read(buffer, {
-                type: 'array',
-            });
-            
-            // Take the first worksheet
-            const sheetName = workbook.SheetNames[0];
-            
-            if (!sheetName) {
-                throw new Error('The Excel file contains no worksheets.');
+                rows = XLSX.utils.sheet_to_json(worksheet, {
+                    header: 1,
+                    defval: '',
+                    range: formType === 'default' ? 19 : 1,
+                });
             }
             
-            const worksheet = workbook.Sheets[sheetName];
-
-            rows = XLSX.utils.sheet_to_json(worksheet, {
-                header: 1,
-                defval: '',
-                range: formulaireType === 'default' ? 19 : 1,
-            });
+            handleFileUpload(rows, formType);
         }
-        
-        handleFileUpload(rows, formulaireType);
+        catch (error) {
+            toast.error("Erreur lors de la lecture du fichier.");
+        }           
     };
 
     // ref for the file input element
@@ -91,7 +93,7 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (r
         setIsDragging(false);
 
         if (event.dataTransfer.files && event.dataTransfer.files[0]) {
-            processFile(event.dataTransfer.files[0]);
+            setSelectedFile(event.dataTransfer.files[0]);
         }
     };
 
@@ -99,7 +101,7 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (r
     const handleChange = function(event: React.ChangeEvent<HTMLInputElement>) {
         event.preventDefault();
         if (event.target.files && event.target.files[0]) {
-            processFile(event.target.files[0]);
+            setSelectedFile(event.target.files[0]);
         }
     };
     
@@ -108,6 +110,17 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (r
         if (inputRef.current) {
             inputRef.current.click();
         }
+    };
+
+    const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        if (!selectedFile) {
+            toast.error("Veuillez sélectionner un fichier.");
+            return;
+        }
+
+        processFile(selectedFile, formulaireType);
     };
 
     return (<>
@@ -143,11 +156,7 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (r
             </label>
         </div>
 
-        <form id="form-file-upload" 
-            onDragEnter={handleDrag} 
-            onClick={onButtonClick}
-            onSubmit={(e) => e.preventDefault()} 
-        >
+        <form id="form-file-upload" onDragEnter={handleDrag} onClick={onButtonClick} onSubmit={handleSubmit}>
             <input ref={inputRef} type="file" id="input-file-upload" multiple={false} accept=".xlsx,.xls,.txt" onChange={handleChange} />
 
             <div className="icon-container">
@@ -158,9 +167,13 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (r
 
             <p className="file-info">Formulaire au format Excel (.xlsx ou .xls) ou texte (.txt)</p>
 
-            {fileName && ( <p className="file-info"> Fichier sélectionné: <strong>{fileName}</strong> </p> )}
+            {selectedFile && ( <p className="file-info"> Fichier sélectionné: <strong>{selectedFile.name}</strong> </p> )}
 
             {isDragging && <div id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}></div>}
         </form>
+
+        <button type="submit" form="form-file-upload" disabled={!selectedFile}>
+            Importer
+        </button>
     </>);
 }
