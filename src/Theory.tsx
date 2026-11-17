@@ -387,16 +387,16 @@ export default function Theory() {
                                 </a>
                                 .
 
-                                <p>Article 474, CIR 92 (revenus 2025).</p>
-                                <p>
+                                <p><i>Article 474, CIR 92 (revenus 2025)</i></p>
+                                <p><i>
                                     Sur demande de l'Administration générale de la documentation patrimoniale, 
                                     le contribuable est, en outre, tenu de souscrire une déclaration portant 
                                     les éléments nécessaires à l'établissement du revenu cadastral du matériel et de l'outillage. 
-                                </p>
-                                <p>   
+                                </i></p>
+                                <p><i>   
                                     Cette déclaration faite sur une formule délivrée par ladite administration au contribuable intéressé, 
                                     doit être reproduite, dûment remplie et signée, dans le délai y indiqué, au fonctionnaire ou au service dont elle émane.
-                                </p>
+                                </i></p>
                             </li>
                             
                             <br />
