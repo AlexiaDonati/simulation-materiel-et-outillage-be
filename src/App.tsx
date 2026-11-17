@@ -23,7 +23,7 @@ function App() {
       return; 
     } 
 
-    if(formType != 'default' && formType != 'alt'){
+    if(formType != 'default' && formType != 'alt' && formType != 'easyval'){
       return;
     }
 

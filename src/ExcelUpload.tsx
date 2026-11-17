@@ -17,39 +17,50 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (r
             return;
         }
 
-        const validExtensions = [".xlsx", ".xls"];
-        const isValid = validExtensions.some((extension) =>
-            file.name.toLowerCase().endsWith(extension)
-        );
-        
+        const fileExtension = file.name.toLowerCase().split('.').pop();
+        const validExtensions = ["xlsx", "xls", "txt"];
+
+        const isValid = validExtensions.includes(fileExtension || '');
         if (!isValid) {
-            toast.error("Veuillez sélectionner un fichier Excel (.xlsx ou .xls).");
+            toast.error("Veuillez sélectionner un fichier Excel (.xlsx ou .xls) ou texte (.txt).");
             return;
         }
 
         setFileName(file.name);
 
-        const buffer = await file.arrayBuffer();
+        let rows: unknown[][] = [];
 
-        const workbook = XLSX.read(buffer, {
-            type: 'array',
-        });
-        
-        // Take the first worksheet
-        const sheetName = workbook.SheetNames[0];
-        
-        if (!sheetName) {
-            throw new Error('The Excel file contains no worksheets.');
+        if (fileExtension === 'txt') {
+            const content = await file.text();
+
+            rows = content.split(/\r?\n/) // split the content into rows
+                .slice(1) // skip column headers row
+                .filter(row => row.trim() !== '') // filter out empty row
+                .map(row => row.split('\t')); // split the rows into values
+        } 
+        else {
+            const buffer = await file.arrayBuffer();
+
+            const workbook = XLSX.read(buffer, {
+                type: 'array',
+            });
+            
+            // Take the first worksheet
+            const sheetName = workbook.SheetNames[0];
+            
+            if (!sheetName) {
+                throw new Error('The Excel file contains no worksheets.');
+            }
+            
+            const worksheet = workbook.Sheets[sheetName];
+
+            rows = XLSX.utils.sheet_to_json(worksheet, {
+                header: 1,
+                defval: '',
+                range: formulaireType === 'default' ? 19 : 1,
+            });
         }
         
-        const worksheet = workbook.Sheets[sheetName];
-
-        const rows: unknown[][] = XLSX.utils.sheet_to_json(worksheet, {
-            header: 1,
-            defval: '',
-            range: formulaireType === 'default' ? 19 : 1,
-        });
-
         handleFileUpload(rows, formulaireType);
     };
 
@@ -120,6 +131,16 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (r
                 /> 
                 Formulaire alternatif (Listing)
             </label>
+            <br />
+            <label>
+                <input 
+                    type="radio" 
+                    value="easyval" 
+                    checked={formulaireType === 'easyval'} 
+                    onChange={() => {setFormulaireType("easyval")}} 
+                /> 
+                Formulaire alternatif (EasyVal)
+            </label>
         </div>
 
         <form id="form-file-upload" 
@@ -127,7 +148,7 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (r
             onClick={onButtonClick}
             onSubmit={(e) => e.preventDefault()} 
         >
-            <input ref={inputRef} type="file" id="input-file-upload" multiple={true} onChange={handleChange} />
+            <input ref={inputRef} type="file" id="input-file-upload" multiple={false} accept=".xlsx,.xls,.txt" onChange={handleChange} />
 
             <div className="icon-container">
                 <img alt="upload" src={uploadIcon} />
@@ -135,7 +156,7 @@ export default function ExcelUpload({ handleFileUpload }: { handleFileUpload: (r
 
             <p className={`drag-text ${isDragging ? "drag-active" : ""}`}>Déposer ou cliquer pour choisir votre fichier</p>
 
-            <p className="file-info">Formulaire 43D au format Excel (.xlsx ou .xls)</p>
+            <p className="file-info">Formulaire au format Excel (.xlsx ou .xls) ou texte (.txt)</p>
 
             {fileName && ( <p className="file-info"> Fichier sélectionné: <strong>{fileName}</strong> </p> )}
 

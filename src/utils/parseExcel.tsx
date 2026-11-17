@@ -29,57 +29,73 @@ const EXONERATION_CODES = [
 ];
 
 export interface MaterialRow {
-  orderNumber: string | null; // not used in the calculation
-  description: string | null; // not used in the calculation
+    orderNumber: string | null; // not used in the calculation
+    description: string | null; // not used in the calculation
 
-  add: {
-    year: number;
-    value: number;
-    code: 3 | 4; // 3 = new, 4 = acquisition
-  };
+    add: {
+        year: number;
+        value: number;
+        code: 3 | 4; // 3 = new, 4 = acquisition
+    };
 
-  remove: {
-    year: number;
-    value: number;
-  } | null;
+    remove: {
+        year: number;
+        value: number;
+    } | null;
 
-  remarks: string | null; // not used in the calculation 
+    remarks: string | null; // not used in the calculation 
 
-  exoneration: {
-    code: string;
-    value: number;
-  } | null;
+    exoneration: {
+        code: string;
+        value: number;
+    } | null;
 }
 
-function toNumber(value: unknown): number | null {
-  if (value === null || value === undefined || value === '') {
-    return null;
-  }
-
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return value;
-  }
-
-  if (typeof value === 'string') {
-    // remove any non-numeric characters except for the decimal separator (comma)
-    let normalized = value.trim().replace(/[^0-9,-]/g, '')
-
-    // Handle cases where the string might contain multiple commas
-    const commaCount = (normalized.match(/,/g) || []).length;
-    if (commaCount > 1) {
-      throw new Error(`Invalid number format: ${value}`);
+function toNumber(value: unknown, separator: string): number | null {
+    if (value === null || value === undefined || value === '') {
+        return null;
     }
 
-    normalized = normalized.replace(/,/g, '.'); // Replace comma with dot for decimal numbers
-    const number = Number(normalized); 
+    if (typeof value === 'number' && Number.isFinite(value)) {
+        return value;
+    }
 
-    return Number.isFinite(number) ? number : null;
-  }
-  return null;
+    if (typeof value === 'string') {
+        let number = 0;
+
+        if(separator === ','){
+            // remove any non-numeric characters except for the decimal separator (comma)
+            let normalized = value.trim().replace(/[^0-9,-]/g, '')
+
+            // Handle cases where the string might contain multiple commas
+            const commaCount = (normalized.match(/,/g) || []).length;
+            if (commaCount > 1) {
+                throw new Error(`Invalid number format: ${value}`);
+            }
+
+            normalized = normalized.replace(/,/g, '.'); // Replace comma with dot for decimal numbers
+            number = Number(normalized); 
+        }
+        else if (separator === '.') {
+            // Remove any non-numeric characters except for the decimal separator (dot)
+            let normalized = value.trim().replace(/[^0-9.-]/g, '');
+
+            // Handle cases where the string might contain multiple dots
+            const dotCount = (normalized.match(/\./g) || []).length;
+            if (dotCount > 1) {
+                throw new Error(`Invalid number format: ${value}`);
+            }
+
+            number = Number(normalized);
+        }
+
+        return Number.isFinite(number) ? number : null;
+    }
+    return null;
 }
 
 function toString(value: unknown): string {
-  return value == null ? '' : String(value).trim();
+    return value == null ? '' : String(value).trim();
 }
 
 export function getExonerationFromRemarks(remarks: string): { code: string; value: number } | null {
@@ -156,19 +172,19 @@ function parse43DRow(row : unknown[]): MaterialRow | undefined {
     const orderNumber = toString(row[0]); // 1
     const description = toString(row[1]); // 2
     
-    const newYear = toNumber(row[7]); // 3a
-    const newValue = toNumber(row[8]); // 3b 
+    const newYear = toNumber(row[7], ','); // 3a
+    const newValue = toNumber(row[8], ','); // 3b 
     
-    const acquisitionYear = toNumber(row[9]); // 4a
-    const acquisitionValue = toNumber(row[10]); //4b
+    const acquisitionYear = toNumber(row[9], ','); // 4a
+    const acquisitionValue = toNumber(row[10], ','); //4b
     
-    const fraisYear = toNumber(row[11]); // 5a -> currently ignored
+    const fraisYear = toNumber(row[11], ','); // 5a -> currently ignored
     // TODO: What to do if fraisYear != add.year?
 
-    const fraisValue = toNumber(row[12]); // 5b
+    const fraisValue = toNumber(row[12], ','); // 5b
 
-    const removeYear = toNumber(row[13]); // 5c
-    const removeValue = toNumber(row[14]); // 5d
+    const removeYear = toNumber(row[13], ','); // 5c
+    const removeValue = toNumber(row[14], ','); // 5d
     
     const remarks = toString(row[15]);
 
@@ -270,23 +286,30 @@ function parse43DRow(row : unknown[]): MaterialRow | undefined {
     };
 }
 
-function parseListingRow(row : unknown[]): MaterialRow | undefined {
+function parseListingRow(row : unknown[], imposition : boolean): MaterialRow | undefined {
+    const separator = imposition ? '.' : ',';
+
     const orderNumber = toString(row[1]); // 1
     const description = toString(row[2]); // 2
     
-    const newYear = toNumber(row[0]); // 3a
-    const newValue = toNumber(row[3]); // 3b 
+    const newYear = toNumber(row[0], separator); // 3a
+    const newValue = toNumber(row[3], separator); // 3b 
     
     // column 4 is from an old legacy form so it is ignored
 
     const ref = toString(row[5]);
     
-    const exonerationValue = toNumber(row[6]);
+    let exonerationValue = toNumber(row[6], separator);
+    if(imposition){
+        exonerationValue = 100 - exonerationValue!;
+    }
+
     const exonerationCode = toString(row[7]);
+    
     const remarks = exonerationValue + " " + exonerationCode;
 
-    const removeYear = toNumber(row[8]); // 5c
-    const removeValue = toNumber(row[10]); // 5d
+    const removeYear = toNumber(row[8], separator); // 5c
+    const removeValue = toNumber(row[10], separator); // 5d
 
     // ---
 
@@ -378,7 +401,15 @@ export function parseMaterials(rows: unknown[][], formType: string): MaterialRow
             materials.push(material);
         }
         else if(formType === 'alt'){
-            const material = parseListingRow(row);
+            const material = parseListingRow(row, false);
+            if(!material){
+                continue;
+            }
+
+            materials.push(material);
+        }
+        else if(formType === 'easyval'){
+            const material = parseListingRow(row, true);
             if(!material){
                 continue;
             }
