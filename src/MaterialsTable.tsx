@@ -106,7 +106,7 @@ export default function MaterialsTable({ materials, onChange } : Props) {
             <p>
                 Il est possible de proposer à l'Administration une exonération proportionnelle pour certaines lignes de matériel et outillage. 
                 <br />
-                Cette proposition prend la forme d'un code à trois chiffres et d'un pourcentage d'exonération proposé (ex : 80% SHE)
+                Cette proposition prend la forme d'un code à trois lettres majuscules et d'un pourcentage d'exonération proposé (ex : 80% SHE)
                 <br />
                 et est à indiquer dans la colonne 6 "Remarques/informations supplémentaires".
             </p>
